@@ -113,26 +113,26 @@ The system is split into three self-contained entry-point applications:
 Here is a breakdown of the key files in the repository:
 
 ### Core Entry Points
-* [VendorApp.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/VendorApp.py): Main entry point for the Vendor Onboarding Portal.
-* [VendorAssistantChatBOT.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/VendorAssistantChatBOT.py): Standalone script executing the AI Support ChatBot.
-* [ReviewerApp.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/ReviewerApp.py): Main entry point for the Reviewer Application.
+* [VendorApp.py](Vendor Onboarding/VendorApp.py): Main entry point for the Vendor Onboarding Portal.
+* [VendorAssistantChatBOT.py](Vendor Onboarding/VendorAssistantChatBOT.py): Standalone script executing the AI Support ChatBot.
+* [ReviewerApp.py](Vendor Onboarding/ReviewerApp.py): Main entry point for the Reviewer Application.
 
 ### Shared Utility Library (`utils/`)
-* [utils/data_manager.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/utils/data_manager.py): Coordinates filesystem persistence (reading/writing `submissions.csv` and `audit_logs.csv`), hashes/verifies reviewer passwords using `bcrypt`, handles transaction locks, and hosts mock database seeding.
-* [utils/extractor.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/utils/extractor.py): Defines structured Pydantic schemas and controls calls to the Google GenAI SDK to retrieve structured text from W-9, COI, Bank Letters, Questionnaires, and Company Registration papers.
-* [utils/pipeline.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/utils/pipeline.py): orchestrates the ingestion pipeline. Translates raw data into compliance scores, evaluates the 10 consistency rules, and saves risk recommendations.
-* [utils/notifier.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/utils/notifier.py): Integrates SMTP email services. Sends transactional notifications (received, approved, corrections requested) with a failover simulated mailbox logging to session state.
-* [utils/style_utils.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/utils/style_utils.py): Holds shared design themes, CSS sheets, customized badges, and a CSS-based layout blocker blocking access to internal dashboards on mobile.
+* [utils/data_manager.py](Vendor Onboarding/utils/data_manager.py): Coordinates filesystem persistence (reading/writing `submissions.csv` and `audit_logs.csv`), hashes/verifies reviewer passwords using `bcrypt`, handles transaction locks, and hosts mock database seeding.
+* [utils/extractor.py](Vendor Onboarding/utils/extractor.py): Defines structured Pydantic schemas and controls calls to the Google GenAI SDK to retrieve structured text from W-9, COI, Bank Letters, Questionnaires, and Company Registration papers.
+* [utils/pipeline.py](Vendor Onboarding/utils/pipeline.py): orchestrates the ingestion pipeline. Translates raw data into compliance scores, evaluates the 10 consistency rules, and saves risk recommendations.
+* [utils/notifier.py](Vendor Onboarding/utils/notifier.py): Integrates SMTP email services. Sends transactional notifications (received, approved, corrections requested) with a failover simulated mailbox logging to session state.
+* [utils/style_utils.py](Vendor Onboarding/utils/style_utils.py): Holds shared design themes, CSS sheets, customized badges, and a CSS-based layout blocker blocking access to internal dashboards on mobile.
 
 ### Views (`views/`)
-* [views/0_Home.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/views/0_Home.py): Welcome dashboard on Vendor App.
-* [views/1_Submit_Form.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/views/1_Submit_Form.py): Stepper wizard collecting company details and documents.
-* [views/2_Track_Status.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/views/2_Track_Status.py): Portal for vendors to check progress, see audit logs, and submit revisions.
-* [views/3_Dashboard.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/views/3_Dashboard.py): Audit queue, risk flags, and actions for procurement reviewers.
-* [views/4_Vendor_Master.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/views/4_Vendor_Master.py): Read-only vendor master ledger tracking ERP keys and active insurance limits.
+* [views/0_Home.py](Vendor Onboarding/views/0_Home.py): Welcome dashboard on Vendor App.
+* [views/1_Submit_Form.py](Vendor Onboarding/views/1_Submit_Form.py): Stepper wizard collecting company details and documents.
+* [views/2_Track_Status.py](Vendor Onboarding/views/2_Track_Status.py): Portal for vendors to check progress, see audit logs, and submit revisions.
+* [views/3_Dashboard.py](Vendor Onboarding/views/3_Dashboard.py): Audit queue, risk flags, and actions for procurement reviewers.
+* [views/4_Vendor_Master.py](Vendor Onboarding/views/4_Vendor_Master.py): Read-only vendor master ledger tracking ERP keys and active insurance limits.
 
 ### Agent Directory (`agent/`)
-* [agent/extractor_agent.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/agent/extractor_agent.py): Holds LangChain-based generative agents to perform unified entity synthesis and cross-comparisons across uploaded attachments.
+* [agent/extractor_agent.py](Vendor Onboarding/agent/extractor_agent.py): Holds LangChain-based generative agents to perform unified entity synthesis and cross-comparisons across uploaded attachments.
 
 ---
 
@@ -161,7 +161,7 @@ Here is a breakdown of the key files in the repository:
 
 ## 🌐 Environment Configuration (`.env`)
 
-Configure the environment details inside the [.env](file:///c:/Users/anmol.main/Downloads/Vendor%20Onboarding/.env) file located in the project root:
+Configure the environment details inside the [.env](Vendor%20Onboarding/.env) file located in the project root:
 
 ```env
 # ── SMTP Mail Services ────────────────────────────────────────────────
@@ -226,7 +226,7 @@ The onboarding pipeline evaluates submissions against 10 built-in compliance che
 ## 💾 Database & Audit Trail System
 
 - **Storage Engine:** Flat-file CSV structures located in `data/submissions.csv` and `data/audit_logs.csv`. Reviewer profiles are saved in `data/users.json`.
-- **Thread Safety:** Every file operation in [utils/data_manager.py](file:///c:/Users/anmol.main/Downloads/Vendor Onboarding/utils/data_manager.py) is guarded by a global Python `threading.Lock` (`_db_lock`) ensuring thread safety during multi-user access.
+- **Thread Safety:** Every file operation in [utils/data_manager.py](Vendor Onboarding/utils/data_manager.py) is guarded by a global Python `threading.Lock` (`_db_lock`) ensuring thread safety during multi-user access.
 - **Audit Logging:** Every user action, automated pipeline task, correction, and approval generates a detailed log record inside `data/audit_logs.csv` tracking:
   - Timestamp
   - Action key (e.g. `submission.received`, `questionnaire.edited`, `human.approved`)

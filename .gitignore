@@ -1,43 +1,35 @@
-# Python
+# ── Sensitive Files / Secrets ─────────────────────────────────────────
+.env
+
+# ── Local Database / Flat-files ───────────────────────────────────────
+data/
+uploads/
+
+# ── Python / Virtual Environments ─────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-build/
-dist/
-*.egg-info/
-.eggs/
-*.egg
-
-# Virtual environments
-.env
-.venv
-env/
+.venv/
 venv/
+ENV/
+env/
+*.venv
 
-# IDE
-.vscode/
+# ── IDEs and System Garbage ───────────────────────────────────────────
 .idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 *.swp
-*.swo
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# Secrets — never commit these
-.env.local
-secrets.json
-*_secret*
-*_key*
-
-# OS
 .DS_Store
 Thumbs.db
 
-# AuxiLab demo outputs
-demo_output/
-*.demo.json
+# ── Streamlit Local Cache/Secrets ─────────────────────────────────────
+.streamlit/secrets.toml
+.streamlit/cache/
+
+# ── Scratch Files / Temp logs ────────────────────────────────────────
+scratch/
+*.log

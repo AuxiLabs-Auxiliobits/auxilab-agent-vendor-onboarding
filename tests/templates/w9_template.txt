@@ -1,0 +1,22 @@
+FORM W-9 (Rev. March 2024)
+Department of the Treasury - Internal Revenue Service
+Request for Taxpayer Identification Number and Certification
+
+1. Legal Name: Brightway Supplies Inc
+2. Business Name / Disregarded Entity Name: Brightway MRO
+3. Federal Tax Classification: Corporation (C-Corp)
+4. Address: 700 Industrial Pkwy, Chicago, IL 60666
+5. Exemptions: Exempt Payee Code: 1, Backup Withholding Exempt: Yes
+
+Part I: Taxpayer Identification Number (TIN)
+Employer Identification Number (EIN): 45-9876543
+
+Part II: Certification
+Under penalties of perjury, I certify that:
+1. The number shown on this form is my correct taxpayer identification number.
+2. I am not subject to backup withholding.
+3. I am a U.S. citizen or other U.S. person.
+
+Signature: Sarah Connor
+Date: 2026-02-14
+State of Incorporation: IL

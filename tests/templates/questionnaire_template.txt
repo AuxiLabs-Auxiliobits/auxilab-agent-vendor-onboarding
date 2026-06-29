@@ -1,0 +1,44 @@
+VENDOR COMPLIANCE QUESTIONNAIRE
+
+1. Business Profile
+- Legal Entity Name: Brightway Supplies Inc
+- Doing Business As (DBA): Brightway MRO
+- Corporate Website: brightwaysupplies.com
+- Primary Contact Person: Sarah Connor
+- Primary Email: sconnor@brightwaysupplies.com
+- Primary Phone: +1-555-0144
+
+2. Accounts Payable (AP) Contact
+- AP Contact Name: John Connor
+- AP Contact Email: ap@brightwaysupplies.com
+- AP Contact Phone: +1-555-0244
+
+3. Corporate Addresses
+- Headquarters Street Address: 700 Industrial Pkwy
+- Headquarters City, State, ZIP: Chicago, IL 60666
+- Billing Street Address: 700 Industrial Pkwy
+- Billing City, State, ZIP: Chicago, IL 60666
+
+4. Tax & Identifiers
+- Federal Employer Identification Number (FEIN/EIN): 45-9876543
+- DUNS Number: 987654321
+- US Tax Classification: C-Corporation
+- US State of Incorporation/Organization: Illinois
+- Subject to backup withholding: No
+- 1099 form reporting eligible: No
+
+5. Commercial Characteristics
+- Products/Services Offered: Industrial maintenance, repair and operations (MRO) supplies
+- Years in Business: 4 years
+- Annual Revenue (USD): $3,800,000
+- Employee Count: 18 employees
+- Business References Count: 2
+- Declare conflict of interest: No
+
+6. Banking Target Details
+- Bank Name: Wells Fargo Bank
+- Bank Beneficiary Name: Brightway Supplies Inc
+- Bank Routing Transit Number: 121000248
+- Account Designation: Checking
+- Account Number: 9876543210
+- SWIFT / BIC Code: CHICUS34XXX

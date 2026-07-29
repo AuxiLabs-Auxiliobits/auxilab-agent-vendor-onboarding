@@ -1,306 +1,318 @@
+"""
+extractor_agent.py
+==================
+Command-line agent entry-point for the vendor document compliance onboarding.
+
+Usage:
+    python agent/extractor_agent.py <input_source> <country> [--text-only]
+    
+    input_source: Either a vendor directory ID (e.g. VND-2026-00012) OR a path to a .txt file containing document file paths.
+"""
+
 import os
 import sys
 import json
 import argparse
-import base64
 from pathlib import Path
 
 try:
-    import fitz  # PyMuPDF
     from dotenv import load_dotenv
-    from langchain_google_genai import ChatGoogleGenerativeAI
-    from langchain_core.messages import HumanMessage
 except ImportError:
-    print("[Error] Missing required libraries. Please install them by running:")
-    print("pip install pymupdf langchain-google-genai langchain-core python-dotenv")
+    print("[Error] Missing 'python-dotenv'. Run: pip install python-dotenv")
     sys.exit(1)
 
 # Load environment variables from project root .env
 env_path = Path(__file__).parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
-# ── Config from .env ─────────────────────────────────────────────
-GEMINI_AGENT_MODEL  = os.getenv("GEMINI_AGENT_MODEL", "gemini-2.5-flash")
-GEMINI_MAX_TOKENS   = int(os.getenv("GEMINI_MAX_TOKENS", "4096"))
-
-def encode_image(image_bytes):
-    return base64.b64encode(image_bytes).decode("utf-8")
-
-def process_file_to_messages(file_path: Path):
-    """Convert a file (PDF, Image, or Text) into LangChain message content blocks."""
-    content_blocks = []
-    
-    if file_path.suffix.lower() == '.pdf':
-        print(f"[Agent] Processing PDF: {file_path.name}")
-        doc = fitz.open(file_path)
-        for page_num in range(len(doc)):
-            page = doc.load_page(page_num)
-            pix = page.get_pixmap(dpi=150)
-            img_bytes = pix.tobytes("png")
-            content_blocks.append({
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:image/png;base64,{encode_image(img_bytes)}"
-                }
-            })
-    elif file_path.suffix.lower() in ['.png', '.jpg', '.jpeg']:
-        print(f"[Agent] Processing Image: {file_path.name}")
-        with open(file_path, "rb") as f:
-            img_bytes = f.read()
-            mime_type = "image/png" if file_path.suffix.lower() == '.png' else "image/jpeg"
-            content_blocks.append({
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:{mime_type};base64,{encode_image(img_bytes)}"
-                }
-            })
-    elif file_path.suffix.lower() == '.txt':
-        print(f"[Agent] Processing Text: {file_path.name}")
-        try:
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                text_content = f.read()
-            content_blocks.append({
-                "type": "text",
-                "text": f"Document content for {file_path.name}:\n{text_content}"
-            })
-        except Exception as e:
-            print(f"[Agent] Error reading text file: {e}")
-            
-    return content_blocks
-
-def run_extraction_agent(vendor_id: str):
-    print(f"\n[Agent] Starting Extraction & Validation Agent for Vendor: {vendor_id}")
-    
-    # 1. Locate the vendor's upload folder
-    base_dir = Path(__file__).parent.parent
-    upload_dir = base_dir / "uploads" / vendor_id
-    
-    if not upload_dir.exists():
-        print(f"[Error] No upload directory found for {vendor_id} at {upload_dir}")
-        return
-        
-    print(f"[Agent] Located upload directory: {upload_dir}")
-    
-    # 2. Gather files in the folder
-    files = list(upload_dir.glob("*"))
-    doc_files = [f for f in files if f.suffix.lower() in ['.pdf', '.png', '.jpg', '.jpeg', '.txt']]
-    json_files = [f for f in files if f.name == 'questionnaire_data.json']
-    
-    if not doc_files:
-        print("[Agent] No documents found to process.")
-        return
-        
-    print(f"[Agent] Found {len(doc_files)} document(s) and {len(json_files)} JSON(s)")
-    
-    # Load questionnaire data
-    questionnaire_data = {}
-    if json_files:
-        try:
-            with open(json_files[0], 'r', encoding='utf-8') as f:
-                questionnaire_data = json.load(f)
-            print("[Agent] Loaded questionnaire_data.json")
-        except Exception as e:
-            print(f"[Agent] Error reading questionnaire JSON: {e}")
-
-    # 3. Define the strict output schema
-    EXTRACTION_SCHEMA = {
-        "vendor_name_cross_validation": {
-            "questionnaire_legal_name": None,
-            "document_legal_names": [],
-            "match": None
-        },
-        "extracted_entities": {
-            "questionnaire": {
-                "legal_name": None,
-                "dba_name": None,
-                "website": None,
-                "contact_name": None,
-                "contact_email": None,
-                "contact_phone": None,
-                "ap_contact_name": None,
-                "ap_contact_email": None,
-                "ap_contact_phone": None,
-                "company_street": None,
-                "company_city": None,
-                "company_state": None,
-                "company_zip": None,
-                "company_address": None,
-                "billing_street": None,
-                "billing_city": None,
-                "billing_state": None,
-                "billing_zip": None,
-                "tax_id_gst": None,
-                "fein": None,
-                "tax_classification": None,
-                "state_of_incorporation": None,
-                "backup_withholding_exempt": None,
-                "is_1099_eligible": None,
-                "products_services": None,
-                "years_in_business": None,
-                "annual_revenue_usd": None,
-                "employee_count": None,
-                "payment_terms": None,
-                "conflict_of_interest": None,
-                "references_count": None,
-                "bank_name": None,
-                "bank_routing_number": None,
-                "bank_account_number": None,
-                "bank_beneficiary_name": None,
-                "swift_bic": None
-            },
-            "documents": []
-        }
-    }
-
-    DOCUMENT_SCHEMA = {
-        "type": None,
-        "legal_name": None,
-        "dba_name": None,
-        "duns": None,
-        "ein": None,
-        "tax_classification": None,
-        "state_of_incorporation": None,
-        "backup_withholding_exempt": None,
-        "is_1099_eligible": None,
-        "insurance_limits": None,
-        "bank_routing_number": None,
-        "bank_account_number": None,
-        "bank_name": None,
-        "bank_beneficiary_name": None,
-        "swift_bic": None
-    }
-
-    schema_example = json.dumps(EXTRACTION_SCHEMA, indent=2)
-
-    # 4. Prepare LangChain messages with strict schema prompt
-    print("[Agent] Preparing documents for LLM extraction...")
-
-    prompt_text = f"""You are an expert vendor compliance analyst. Review ALL the following documents and the attached questionnaire JSON data.
-
-Your task:
-1. Extract key entities from the questionnaire and from EACH uploaded document.
-2. Cross-validate the legal name between the questionnaire and all documents.
-
-You MUST return ONLY a valid JSON object matching this EXACT schema. No markdown, no commentary, no extra fields.
-
-REQUIRED OUTPUT SCHEMA:
-{schema_example}
-
-RULES:
-- "vendor_name_cross_validation.questionnaire_legal_name": The legal name from the questionnaire JSON.
-- "vendor_name_cross_validation.document_legal_names": A list of ALL legal names found across ALL uploaded documents.
-- "vendor_name_cross_validation.match": true if questionnaire legal name matches any document legal name, false otherwise.
-- "extracted_entities.questionnaire": Extract these fields from the questionnaire JSON data. Use null if not found.
-- "extracted_entities.documents": An array with ONE entry per uploaded document. Each entry MUST have ALL these fields:
-    - "type": The document type (e.g., "W-9 Form", "Certificate of Liability Insurance", "Bank Statement/Certification")
-    - "legal_name": Legal name found in this specific document, or null
-    - "dba_name": Doing Business As name if found, or null
-    - "duns": DUNS number found in this document, or null
-    - "ein": EIN/Tax ID/FEIN found in this document, or null
-    - "tax_classification": US tax classification if found, or null
-    - "state_of_incorporation": State of incorporation/organization if found, or null
-    - "backup_withholding_exempt": Exempt from backup withholding status if found (true/false), or null
-    - "is_1099_eligible": Eligible for 1099 reporting status if found (true/false), or null
-    - "insurance_limits": An object with limit fields if this is an insurance document, or null
-    - "bank_routing_number": Routing number found in this document, or null
-    - "bank_account_number": Account number found in this document, or null
-    - "bank_name": Bank name found in this document, or null
-    - "bank_beneficiary_name": Bank beneficiary name / account holder name found in this document, or null
-    - "swift_bic": SWIFT or BIC code found in this document, or null
-
-IMPORTANT: Every field must be present in the output. Use null for fields that cannot be extracted. Do NOT omit any field. Do NOT add extra fields. Return ONLY the JSON object."""
-
-    message_content = [
-        {"type": "text", "text": prompt_text}
-    ]
-    
-    if questionnaire_data:
-        message_content.append({
-            "type": "text",
-            "text": f"Questionnaire Data: {json.dumps(questionnaire_data, indent=2)}"
-        })
-        
-    for doc_file in doc_files:
-        message_content.append({
-            "type": "text",
-            "text": f"--- Document: {doc_file.name} ---"
-        })
-        blocks = process_file_to_messages(doc_file)
-        message_content.extend(blocks)
-        
-    # 5. Invoke LLM
-    print("\n[Agent] Invoking LangChain model (gemini-2.5-flash)...")
+if sys.platform == "win32":
     try:
-        llm = ChatGoogleGenerativeAI(model=GEMINI_AGENT_MODEL, max_tokens=GEMINI_MAX_TOKENS)
-        message = HumanMessage(content=message_content)
-        
-        response = llm.invoke([message])
-        
-        # Clean up potential markdown formatting
-        clean_json_str = response.content.strip()
-        if clean_json_str.startswith("```json"):
-            clean_json_str = clean_json_str[7:]
-        if clean_json_str.startswith("```"):
-            clean_json_str = clean_json_str[3:]
-        if clean_json_str.endswith("```"):
-            clean_json_str = clean_json_str[:-3]
-        clean_json_str = clean_json_str.strip()
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
-        # Parse the LLM response
-        try:
-            raw_result = json.loads(clean_json_str)
-        except json.JSONDecodeError:
-            print("[Agent] Warning: LLM returned invalid JSON. Saving raw output.")
-            raw_result = {}
+# Add project root to sys.path so we can import utils
+project_root = Path(__file__).parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
-        # Normalize the result to match the strict schema
-        import copy
-        result = copy.deepcopy(EXTRACTION_SCHEMA)
+from agent.config_loader import build_extraction_schema
+from agent.pipeline import run_compliance_pipeline
 
-        # Merge vendor_name_cross_validation
-        vnc = raw_result.get("vendor_name_cross_validation", {}) or {}
-        result["vendor_name_cross_validation"]["questionnaire_legal_name"] = vnc.get("questionnaire_legal_name")
-        result["vendor_name_cross_validation"]["document_legal_names"] = vnc.get("document_legal_names", []) or []
-        result["vendor_name_cross_validation"]["match"] = vnc.get("match")
+SUPPORTED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".txt"}
 
-        # Merge extracted_entities.questionnaire
-        raw_q = (raw_result.get("extracted_entities", {}) or {}).get("questionnaire", {}) or {}
-        for key in EXTRACTION_SCHEMA["extracted_entities"]["questionnaire"]:
-            result["extracted_entities"]["questionnaire"][key] = raw_q.get(key)
-
-        # Merge extracted_entities.documents
-        raw_docs = (raw_result.get("extracted_entities", {}) or {}).get("documents", []) or []
-        normalized_docs = []
-        for doc in raw_docs:
-            norm_doc = copy.deepcopy(DOCUMENT_SCHEMA)
-            for key in DOCUMENT_SCHEMA:
-                if key in doc:
-                    norm_doc[key] = doc[key]
-            normalized_docs.append(norm_doc)
-        result["extracted_entities"]["documents"] = normalized_docs
-
-        # Pretty-print for console
-        final_json = json.dumps(result, indent=2, ensure_ascii=False)
-        print("\n" + "="*50)
-        print("EXTRACTION RESULTS")
-        print("="*50)
-        print(final_json)
-        print("="*50 + "\n")
-        
-        # Save results
-        results_path = upload_dir / "extraction_results.json"
-        with open(results_path, 'w', encoding='utf-8') as f:
-            f.write(final_json)
-            
-    except Exception as e:
-        print(f"\n[Error] LLM Extraction failed: {e}")
-        print("Hint: Make sure your GEMINI_API_KEY is correct in your .env file.")
+def discover_documents(upload_dir: Path, country: str) -> list:
+    """
+    Discover uploaded documents in the vendor's upload directory.
+    Checks for a 'document_manifest.json' file first.
+    Falls back to filename-based hinting for manually placed files.
+    """
+    manifest_path = upload_dir / "document_manifest.json"
     
-    print("[Agent] Done.")
+    if manifest_path.exists():
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                manifest = json.load(f)
+            pairs = []
+            for entry in manifest.get("documents", []):
+                doc_type = entry.get("document_type", "Unknown Document")
+                file_name = entry.get("file_name", "")
+                file_path = upload_dir / file_name
+                if file_path.exists() and file_path.suffix.lower() in SUPPORTED_EXTENSIONS:
+                    pairs.append((doc_type, file_path))
+            if pairs:
+                return pairs
+        except Exception as e:
+            print(f"[Agent] Warning: Could not read manifest ({e}). Falling back to filename hinting.")
+
+    # Fallback to filename keyword mapping
+    from agent.config_loader import get_config_for_country
+    doc_configs = get_config_for_country(country)
+    configured_types = [c["document_type"] for c in doc_configs]
+
+    KEYWORD_MAP = {
+        "w9": "W-9 Tax Form",
+        "w-9": "W-9 Tax Form",
+        "coi": "Certificate of Insurance",
+        "insurance": "Certificate of Insurance",
+        "bank": "Bank Verification Letter",
+        "bank_letter": "Bank Verification Letter",
+        "questionnaire": "Questionnaire",
+        "company_reg": "Company Registration",
+        "registration": "Company Registration",
+        "gst": "GST Registration Certificate",
+        "pan": "PAN Card",
+        "trade_license": "Trade License",
+        "trn": "TRN Certificate",
+        "acra": "ACRA Business Profile",
+        "vat": "VAT Registration Certificate",
+        "incorporation": "Certificate of Incorporation",
+        "w-8ben": "W-8BEN-E Form",
+        "w8ben": "W-8BEN-E Form"
+    }
+
+    files = [
+        f for f in upload_dir.glob("*")
+        if f.is_file() and f.suffix.lower() in SUPPORTED_EXTENSIONS
+        and f.name not in ("document_manifest.json", "extraction_results.json", "compliance_report.json")
+    ]
+
+    pairs = []
+    unmapped = []
+    for f in files:
+        name_lower = f.stem.lower().replace("-", "_").replace(" ", "_")
+        matched = False
+        for kw, dt in KEYWORD_MAP.items():
+            if kw in name_lower and dt in configured_types:
+                pairs.append((dt, f))
+                matched = True
+                break
+        if not matched:
+            for ct in configured_types:
+                if ct.lower().replace("-","").replace(" ","") in name_lower.replace("_",""):
+                    pairs.append((ct, f))
+                    matched = True
+                    break
+        if not matched:
+            unmapped.append(f)
+
+    # Distribute remaining unmapped files
+    mapped_types = [p[0] for p in pairs]
+    remaining_reqs = [ct for ct in configured_types if ct not in mapped_types]
+    for uf in unmapped:
+        if remaining_reqs:
+            pairs.append((remaining_reqs.pop(0), uf))
+        elif configured_types:
+            pairs.append((configured_types[0], uf))
+        else:
+            pairs.append(("Unknown Document", uf))
+
+    return pairs
+
+def run_cli_agent(input_source: str, country: str, text_only: bool = False):
+    print(f"\n[Agent] ===================================================")
+    print(f"[Agent] Compliance Verification Agent | Source: {input_source} | Country: {country}")
+    print(f"[Agent] ===================================================\n")
+
+    base_dir = Path(__file__).parent.parent
+    
+    # Check if input_source is a text file containing file paths
+    is_txt_file = input_source.lower().endswith(".txt") and os.path.isfile(input_source)
+
+    if is_txt_file:
+        print(f"[Agent] Reading document paths from text file: {input_source}")
+        with open(input_source, "r", encoding="utf-8") as f:
+            lines = f.read().splitlines()
+        
+        file_paths = []
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            p = Path(line)
+            # Resolve relative paths against workspace root if not absolute
+            if not p.exists() and not p.is_absolute():
+                p = base_dir / p
+            if p.exists() and p.is_file():
+                file_paths.append(p)
+            else:
+                print(f"[Agent] Warning: File path from list does not exist: {line}")
+                
+        if not file_paths:
+            print(f"[Agent] ERROR: No valid document file paths found in {input_source}")
+            sys.exit(1)
+            
+        # Map/discover document types for files
+        from agent.config_loader import get_config_for_country
+        doc_configs = get_config_for_country(country)
+        configured_types = [c["document_type"] for c in doc_configs]
+
+        KEYWORD_MAP = {
+            "w9": "W-9 Tax Form",
+            "w-9": "W-9 Tax Form",
+            "coi": "Certificate of Insurance",
+            "insurance": "Certificate of Insurance",
+            "bank": "Bank Verification Letter",
+            "bank_letter": "Bank Verification Letter",
+            "questionnaire": "Questionnaire",
+            "company_reg": "Company Registration",
+            "registration": "Company Registration",
+            "gst": "GST Registration Certificate",
+            "pan": "PAN Card",
+            "trade_license": "Trade License",
+            "trn": "TRN Certificate",
+            "acra": "ACRA Business Profile",
+            "vat": "VAT Registration Certificate",
+            "incorporation": "Certificate of Incorporation",
+            "w-8ben": "W-8BEN-E Form",
+            "w8ben": "W-8BEN-E Form"
+        }
+
+        documents = []
+        unmapped = []
+        for f in file_paths:
+            name_lower = f.stem.lower().replace("-", "_").replace(" ", "_")
+            matched = False
+            for kw, dt in KEYWORD_MAP.items():
+                if kw in name_lower and dt in configured_types:
+                    documents.append((dt, f))
+                    matched = True
+                    break
+            if not matched:
+                for ct in configured_types:
+                    if ct.lower().replace("-","").replace(" ","") in name_lower.replace("_",""):
+                        documents.append((ct, f))
+                        matched = True
+                        break
+            if not matched:
+                unmapped.append(f)
+
+        # Distribute remaining unmapped files
+        mapped_types = [d[0] for d in documents]
+        remaining = [ct for ct in configured_types if ct not in mapped_types]
+        for f in unmapped:
+            if remaining:
+                documents.append((remaining.pop(0), f))
+            elif configured_types:
+                documents.append((configured_types[0], f))
+            else:
+                documents.append(("Unknown Document", f))
+                
+        report_output_path = Path(input_source).parent / "compliance_report.json"
+    else:
+        # Standard directory mapping
+        upload_dir = base_dir / "uploads" / input_source
+
+        if not upload_dir.exists():
+            print(f"[Agent] ERROR: Vendor upload directory not found: {upload_dir}")
+            sys.exit(1)
+
+        documents = discover_documents(upload_dir, country)
+        if not documents:
+            print("[Agent] ERROR: No documents found in vendor folder.")
+            sys.exit(1)
+            
+        report_output_path = upload_dir / "compliance_report.json"
+
+    print(f"[Agent] Loaded {len(documents)} document(s) for verification:")
+    for doc_type, file_path in documents:
+        print(f"  - {file_path.name} mapped as '{doc_type}'")
+
+    # 2. Run compliance pipeline
+    print("\n[Agent] Processing compliance analysis pipeline...")
+    
+    def progress_cb(msg: str):
+        print(f"  [Pipeline] {msg}")
+
+    try:
+        report = run_compliance_pipeline(
+            country=country,
+            documents=documents,
+            text_only=text_only,
+            progress_callback=progress_cb
+        )
+    except Exception as e:
+        print(f"[Agent] ERROR during pipeline execution: {e}")
+        sys.exit(1)
+
+    # 3. Save report output
+    with open(report_output_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=2, ensure_ascii=False)
+        
+    print(f"\n[Agent] Detailed compliance report saved to: {report_output_path}")
+
+    # 4. Console output summary
+    rec = report["summary"]["recommendation"]
+    reason = report["summary"]["recommendation_reason"]
+    completeness = report["summary"]["overall_completeness_pct"]
+
+    print(f"\n[Agent] ===================================================")
+    print(f"[Agent] COMPLIANCE VERIFICATION DECISION")
+    print(f"[Agent] ---------------------------------------------------")
+    print(f"[Agent] Overall Recommendation : {rec.upper()}")
+    print(f"[Agent] Risk Rating            : {report['summary'].get('risk_level', 'LOW RISK')}")
+    print(f"[Agent] Vendor Risk Score      : {report['summary'].get('vendor_risk_score', 0)} / 100")
+    print(f"[Agent] Weighted Compliance    : {report['summary'].get('vendor_compliance_score', 100)}%")
+    print(f"[Agent] Decision Reason        : {reason}")
+    print(f"[Agent] Overall Completeness   : {completeness:.1f}%")
+    print(f"[Agent] Total Input Tokens     : {report['summary'].get('total_input_tokens', 0)}")
+    print(f"[Agent] Total Output Tokens    : {report['summary'].get('total_output_tokens', 0)}")
+    
+    missing_docs = report.get("missing_required_docs", [])
+    if missing_docs:
+        print(f"[Agent] Missing Required Docs  : {', '.join(missing_docs)}")
+
+    val_errors = report.get("all_validation_errors", {})
+    if val_errors:
+        total_errors = sum(len(e) for e in val_errors.values())
+        print(f"[Agent] Validation Failures    : {total_errors} fields failed")
+        for doc, errs in val_errors.items():
+            for f, msg in errs.items():
+                print(f"    - {doc} -> {f}: {msg}")
+
+    cross_val = report.get("cross_validation", [])
+    inconsistent = [c for c in cross_val if isinstance(c, dict) and not c.get("consistent", True)]
+    if inconsistent:
+        print(f"[Agent] Cross-Doc Mismatches   : {len(inconsistent)} conflicts")
+        for c in inconsistent:
+            print(f"    - {c.get('field_name')}: {c.get('details')}")
+
+    print(f"[Agent] ===================================================\n")
+
+    # 5. Output complete JSON details to console as requested
+    # print(json.dumps(report, indent=2, ensure_ascii=False))
+    return report
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run LangChain Extractor Agent")
-    parser.add_argument("vendor_id", type=str, help="The Vendor ID (e.g., VND-2026-00004)")
+    parser = argparse.ArgumentParser(description="Standalone Compliance Verification Agent")
+    parser.add_argument("input_source", type=str, help="Either a vendor reference ID or a path to a .txt file containing document file paths")
+    parser.add_argument("country", type=str, help="Target country compliance profile (e.g., USA, India)")
+    parser.add_argument("--text-only", action="store_true", help="Enable text-only fallback (no vision model used)")
     args = parser.parse_args()
-    
-    run_extraction_agent(args.vendor_id)
+
+    report = run_cli_agent(args.input_source, args.country, text_only=args.text_only)
+
+    print("--- BEGIN COMPLIANCE JSON REPORT ---")
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    print("--- END COMPLIANCE JSON REPORT ---\n")

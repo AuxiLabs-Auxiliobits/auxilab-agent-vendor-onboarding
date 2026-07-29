@@ -2,8 +2,8 @@ FORM W-9 (Rev. March 2024)
 Department of the Treasury - Internal Revenue Service
 Request for Taxpayer Identification Number and Certification
 
-1. Legal Name: Brightway Supplies Inc
-2. Business Name / Disregarded Entity Name: Brightway MRO
+1. Legal Name: Alpha Ventures LLC
+2. Business Name / Disregarded Entity Name: Alpha Ventures LLC
 3. Federal Tax Classification: Corporation (C-Corp)
 4. Address: 700 Industrial Pkwy, Chicago, IL 60666
 5. Exemptions: Exempt Payee Code: 1, Backup Withholding Exempt: Yes

@@ -1,35 +1,3 @@
-# ── Sensitive Files / Secrets ─────────────────────────────────────────
+compliance_report.json
+document_paths.txt
 .env
-
-# ── Local Database / Flat-files ───────────────────────────────────────
-data/
-uploads/
-
-# ── Python / Virtual Environments ─────────────────────────────────────
-__pycache__/
-*.py[cod]
-*$py.class
-.venv/
-venv/
-ENV/
-env/
-*.venv
-
-# ── IDEs and System Garbage ───────────────────────────────────────────
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.swp
-.DS_Store
-Thumbs.db
-
-# ── Streamlit Local Cache/Secrets ─────────────────────────────────────
-.streamlit/secrets.toml
-.streamlit/cache/
-
-# ── Scratch Files / Temp logs ────────────────────────────────────────
-scratch/
-*.log

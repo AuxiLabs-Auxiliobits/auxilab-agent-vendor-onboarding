@@ -1,11 +1,11 @@
-streamlit
+gradio
 google-genai
 langchain
 langchain-google-genai
+langchain-anthropic
 langchain-core
 pypdf
 pymupdf
-bcrypt
 python-dotenv
 pydantic>=2.0.0
 pandas

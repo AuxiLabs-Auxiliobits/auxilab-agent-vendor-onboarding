@@ -1,7 +1,7 @@
 VENDOR COMPLIANCE QUESTIONNAIRE
 
 1. Business Profile
-- Legal Entity Name: Brightway Supplies Inc
+- Legal Entity Name: Alpha Ventures LLC
 - Doing Business As (DBA): Brightway MRO
 - Corporate Website: brightwaysupplies.com
 - Primary Contact Person: Sarah Connor
@@ -37,7 +37,7 @@ VENDOR COMPLIANCE QUESTIONNAIRE
 
 6. Banking Target Details
 - Bank Name: Wells Fargo Bank
-- Bank Beneficiary Name: Brightway Supplies Inc
+- Bank Beneficiary Name: Alpha Ventures LLC
 - Bank Routing Transit Number: 121000248
 - Account Designation: Checking
 - Account Number: 9876543210

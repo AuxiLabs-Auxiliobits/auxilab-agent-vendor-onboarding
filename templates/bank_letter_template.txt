@@ -4,14 +4,14 @@ Official Banking Correspondence
 
 Date: 2026-02-20
 
-Subject: Bank Account Verification for Brightway Supplies Inc
+Subject: Bank Account Verification for Alpha Ventures LLC
 
 To Whom It May Concern,
 
-This letter serves to confirm that Brightway Supplies Inc maintains an active commercial banking relationship in good standing with Wells Fargo Bank, N.A.
+This letter serves to confirm that Alpha Ventures LLC maintains an active commercial banking relationship in good standing with Wells Fargo Bank, N.A.
 
 The account details are verified as follows:
-Account Holder / Beneficiary Name: Brightway Supplies Inc
+Account Holder / Beneficiary Name: Alpha Ventures LLC
 Account Designation / Type: Checking
 Routing Transit Number (9-Digit): 121000248
 Account Number (Last 4 digits): 9812

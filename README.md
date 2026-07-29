@@ -263,6 +263,8 @@ The final workflow recommendation is automatically generated based on the severi
     Create a `.env` file in the project root:
     ```env
     LLM_PROVIDER=google
+    TEXT_ONLY_FALLBACK=false
+
     GEMINI_API_KEY=your_gemini_api_key_here
     GEMINI_AGENT_MODEL=gemini-2.5-flash
     GEMINI_MAX_TOKENS=4096

@@ -3,6 +3,7 @@ google-genai
 langchain
 langchain-google-genai
 langchain-anthropic
+langchain-groq
 langchain-core
 pypdf
 pymupdf

@@ -121,6 +121,58 @@ def _get_token_usage(response) -> tuple:
         
     return 0, 0
 
+
+def _parse_json_from_llm(raw: str) -> Any:
+    """Robustly extract and parse JSON from a raw LLM response string."""
+    raw = raw.strip()
+    
+    # Try parsing directly first
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        pass
+
+    # Try removing markdown fences
+    clean_raw = raw
+    if clean_raw.startswith("```json"):
+        clean_raw = clean_raw[7:]
+    elif clean_raw.startswith("```"):
+        clean_raw = clean_raw[3:]
+    if clean_raw.endswith("```"):
+        clean_raw = clean_raw[:-3]
+    clean_raw = clean_raw.strip()
+
+    try:
+        return json.loads(clean_raw)
+    except json.JSONDecodeError:
+        pass
+
+    # Try extracting the JSON block using bracket matching
+    first_dict = clean_raw.find('{')
+    first_array = clean_raw.find('[')
+    
+    start_idx = -1
+    end_char = ''
+    if first_dict != -1 and (first_array == -1 or first_dict < first_array):
+        start_idx = first_dict
+        end_char = '}'
+    elif first_array != -1:
+        start_idx = first_array
+        end_char = ']'
+        
+    if start_idx != -1:
+        end_idx = clean_raw.rfind(end_char)
+        if end_idx != -1 and end_idx > start_idx:
+            json_candidate = clean_raw[start_idx:end_idx + 1]
+            try:
+                return json.loads(json_candidate)
+            except json.JSONDecodeError:
+                pass
+                
+    # If all parsing attempts fail, raise a JSONDecodeError
+    return json.loads(raw)
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Dynamic prompt builder
 # ─────────────────────────────────────────────────────────────────────────────
@@ -291,6 +343,20 @@ def run_dynamic_extraction(
         max_tokens = int(os.getenv("ANTHROPIC_MAX_TOKENS", "4096"))
         api_key = os.getenv("ANTHROPIC_API_KEY")
         llm = ChatAnthropic(model=model_name, max_tokens=max_tokens, api_key=api_key)
+    elif llm_provider == "groq":
+        try:
+            from langchain_groq import ChatGroq
+        except ImportError:
+            raise ImportError(
+                "Groq LLM provider selected but 'langchain-groq' is not installed. "
+                "Please run: pip install langchain-groq"
+            )
+        model_name = os.getenv("GROQ_MODEL", os.getenv("LLM_MODEL", "llama-3.3-70b-versatile"))
+        max_tokens = int(os.getenv("GROQ_MAX_TOKENS", "4096"))
+        api_key = os.getenv("GROQ_API_KEY")
+        if "vision" not in model_name.lower():
+            text_only = True
+        llm = ChatGroq(model=model_name, max_tokens=max_tokens, groq_api_key=api_key)
     else:
         try:
             from langchain_google_genai import ChatGoogleGenerativeAI
@@ -350,17 +416,8 @@ def run_dynamic_extraction(
             total_output_tokens += out_tok
 
             raw = response.content.strip()
-            # Strip potential markdown fences
-            if raw.startswith("```json"):
-                raw = raw[7:]
-            if raw.startswith("```"):
-                raw = raw[3:]
-            if raw.endswith("```"):
-                raw = raw[:-3]
-            raw = raw.strip()
-
             try:
-                extracted = json.loads(raw)
+                extracted = _parse_json_from_llm(raw)
             except json.JSONDecodeError:
                 extracted = {"parse_error": True, "raw_response": raw[:500]}
 
@@ -420,14 +477,7 @@ def run_dynamic_extraction(
                 total_input_tokens += inp_tok
                 total_output_tokens += out_tok
                 raw = response.content.strip()
-                if raw.startswith("```json"):
-                    raw = raw[7:]
-                if raw.startswith("```"):
-                    raw = raw[3:]
-                if raw.endswith("```"):
-                    raw = raw[:-3]
-                raw = raw.strip()
-                cross_validation = json.loads(raw)
+                cross_validation = _parse_json_from_llm(raw)
             except Exception as e:
                 cross_validation = [{"error": f"Cross-validation failed: {str(e)}"}]
 

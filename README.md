@@ -284,7 +284,10 @@ The final workflow recommendation is automatically generated based on the severi
     LLM_PROVIDER=google
     TEXT_ONLY_FALLBACK=false
 
+<<<<<<< HEAD
     # Google Gemini
+=======
+>>>>>>> origin/pixel-pirates
     GEMINI_API_KEY=your_gemini_api_key_here
     GEMINI_AGENT_MODEL=gemini-2.5-flash
     GEMINI_MAX_TOKENS=4096

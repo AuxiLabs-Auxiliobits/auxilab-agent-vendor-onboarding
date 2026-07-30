@@ -4,8 +4,8 @@
     "vendor_name": "Direct Input Vendor",
     "contact_email": "",
     "country": "USA",
-    "generated_at": "2026-07-29 17:42:36",
-    "extracted_at": "2026-07-29 17:42:36"
+    "generated_at": "2026-07-30 11:47:25",
+    "extracted_at": "2026-07-30 11:47:25"
   },
   "summary": {
     "overall_completeness_pct": 91.7,
@@ -18,8 +18,8 @@
     "total_validation_errors": 0,
     "recommendation": "Approve",
     "recommendation_reason": "Clean compliance: All required documents are present, fields validated, and all consistency checks passed.",
-    "total_input_tokens": 2937,
-    "total_output_tokens": 6483,
+    "total_input_tokens": 2940,
+    "total_output_tokens": 5795,
     "vendor_compliance_score": 97.5,
     "vendor_risk_score": 2.5,
     "risk_level": "LOW RISK",
@@ -59,7 +59,7 @@
         },
         {
           "name": "tax_classification",
-          "value": "LLC, C Corporation",
+          "value": "LLC, taxed as a C corporation",
           "has_error": false,
           "error": ""
         },
@@ -152,7 +152,7 @@
         },
         {
           "name": "general_liability_aggregate",
-          "value": 4000000,
+          "value": 1000000,
           "has_error": false,
           "error": ""
         },
@@ -314,18 +314,10 @@
       "has_llm_error": false
     }
   ],
-  "cross_validation": [
-    {
-      "field_name": "banking_information",
-      "consistent": false,
-      "details": "The Bank Verification Letter provides a US routing number ('123456789') but lists 'HDFC Bank Ltd.' with an Indian SWIFT/BIC ('HDFCINBBCHE'). This combination is inconsistent for a vendor onboarding in the USA, as it suggests a non-US bank account despite the inclusion of a US domestic routing number."
-    }
-  ],
+  "cross_validation": [],
   "missing_required_docs": [],
   "all_validation_errors": {},
-  "recommendations": [
-    "Resolve cross-document conflict in 'banking_information': The Bank Verification Letter provides a US routing number ('123456789') but lists 'HDFC Bank Ltd.' with an Indian SWIFT/BIC ('HDFCINBBCHE'). This combination is inconsistent for a vendor onboarding in the USA, as it suggests a non-US bank account despite the inclusion of a US domestic routing number."
-  ],
+  "recommendations": [],
   "compliance_rules": [
     {
       "rule_id": "Rule 1",

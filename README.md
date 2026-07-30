@@ -260,14 +260,28 @@ The final workflow recommendation is automatically generated based on the severi
     ```
 
 3.  **Configure environment variables (`.env`):**
-    Create a `.env` file in the project root:
+    Create a `.env` file in the project root using [envExample.txt](envExample.txt) as a template.
+    
+    Example `.env` configuration:
     ```env
+    # Options: google, anthropic, groq
     LLM_PROVIDER=google
     TEXT_ONLY_FALLBACK=false
 
+    # Google Gemini
     GEMINI_API_KEY=your_gemini_api_key_here
     GEMINI_AGENT_MODEL=gemini-2.5-flash
     GEMINI_MAX_TOKENS=4096
+
+    # Groq (Optional)
+    # GROQ_API_KEY=your_groq_api_key_here
+    # GROQ_MODEL=llama-3.3-70b-versatile
+    # GROQ_MAX_TOKENS=4096
+
+    # Anthropic (Optional)
+    # ANTHROPIC_API_KEY=your_anthropic_api_key_here
+    # ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
+    # ANTHROPIC_MAX_TOKENS=4096
     
     SYSTEM_DATE=2026-06-09
     COI_MIN_LIABILITY_USD=1000000

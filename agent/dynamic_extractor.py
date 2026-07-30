@@ -12,6 +12,29 @@ def _encode_bytes(data: bytes) -> str:
     """Encode binary bytes to base64 string."""
     return base64.b64encode(data).decode("utf-8")
 
+def _extract_text_from_pdf(file_path: Path) -> str:
+    """Tries to extract text from PDF using PyMuPDF (fitz) or pypdf."""
+    try:
+        import fitz  # PyMuPDF
+        doc = fitz.open(file_path)
+        text = "\n".join([page.get_text() for page in doc])
+        if text.strip():
+            return text
+    except Exception:
+        pass
+
+    try:
+        import pypdf
+        reader = pypdf.PdfReader(file_path)
+        text = "\n".join([page.extract_text() for page in reader.pages])
+        if text.strip():
+            return text
+    except Exception:
+        pass
+
+    return ""
+
+
 def _file_to_content_blocks(file_path: Path, text_only: bool = False) -> List[Dict]:
     """
     Convert document pages or text files into list of human message content blocks.
@@ -23,36 +46,23 @@ def _file_to_content_blocks(file_path: Path, text_only: bool = False) -> List[Di
 
     if text_only:
         # Standard text-only fallback path (zero PDF rendering)
-        if suffix in (".pdf", ".txt"):
-            try:
-                import fitz  # PyMuPDF
-                doc = fitz.open(file_path)
-                text = "\n".join([page.get_text() for page in doc])
+        if suffix == ".pdf":
+            text = _extract_text_from_pdf(file_path)
+            if text:
                 blocks.append({"type": "text", "text": f"Document text content:\n{text}"})
-            except Exception as e:
-                # Direct read if pure text file
-                try:
-                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                        text = f.read()
-                    blocks.append({"type": "text", "text": f"Document text content:\n{text}"})
-                except Exception:
-                    pass
+        elif suffix == ".txt":
+            try:
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                    text = f.read()
+                blocks.append({"type": "text", "text": f"Document text content:\n{text}"})
+            except Exception:
+                pass
         return blocks
 
     # Vision-based multimodal path
     if suffix == ".pdf":
         try:
             import fitz  # PyMuPDF
-        except ImportError:
-            # Fall back to text extraction if fitz is not installed
-            try:
-                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                    text = f.read()
-                return [{"type": "text", "text": f"Document text content:\n{text}"}]
-            except Exception:
-                return []
-
-        try:
             doc = fitz.open(file_path)
             for page in doc:
                 # Render page at 150 DPI for legibility and efficiency
@@ -63,20 +73,20 @@ def _file_to_content_blocks(file_path: Path, text_only: bool = False) -> List[Di
                     "image_url": {"url": f"data:image/png;base64,{_encode_bytes(img_bytes)}"}
                 })
         except Exception as e:
-            # If rendering fails, try text extraction
-            try:
-                doc = fitz.open(file_path)
-                text = "\n".join([page.get_text() for page in doc])
+            # If rendering fails (e.g. fitz not installed or error), try text extraction
+            text = _extract_text_from_pdf(file_path)
+            if text:
                 blocks.append({"type": "text", "text": f"Document text content (fallback from render failure):\n{text}"})
-            except Exception:
-                pass
 
-    elif suffix == ".png":
-        with open(file_path, "rb") as f:
-            blocks.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/png;base64,{_encode_bytes(f.read())}"}
-            })
+    elif suffix in (".png", ".jpg", ".jpeg"):
+        try:
+            with open(file_path, "rb") as f:
+                blocks.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/png;base64,{_encode_bytes(f.read())}"}
+                })
+        except Exception:
+            pass
 
     elif suffix == ".txt":
         try:

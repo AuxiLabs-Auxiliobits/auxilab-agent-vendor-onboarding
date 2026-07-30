@@ -4,11 +4,11 @@
     "vendor_name": "Direct Input Vendor",
     "contact_email": "",
     "country": "USA",
-    "generated_at": "2026-07-30 11:56:11",
-    "extracted_at": "2026-07-30 11:56:11"
+    "generated_at": "2026-07-30 15:01:54",
+    "extracted_at": "2026-07-30 15:01:54"
   },
   "summary": {
-    "overall_completeness_pct": 93.8,
+    "overall_completeness_pct": 91.7,
     "status": "✅ Complete",
     "status_reason": "Clean compliance: All required documents are present, fields validated, and all consistency checks passed.",
     "total_docs_uploaded": 4,
@@ -18,14 +18,14 @@
     "total_validation_errors": 0,
     "recommendation": "Approve",
     "recommendation_reason": "Clean compliance: All required documents are present, fields validated, and all consistency checks passed.",
-    "total_input_tokens": 2937,
-    "total_output_tokens": 6409,
-    "vendor_compliance_score": 98.1,
-    "vendor_risk_score": 1.9,
+    "total_input_tokens": 2952,
+    "total_output_tokens": 5973,
+    "vendor_compliance_score": 97.5,
+    "vendor_risk_score": 2.5,
     "risk_level": "LOW RISK",
     "risk_badge": "🟢 LOW RISK",
     "risk_matrix_breakdown": {
-      "completeness_score_weight_30": 93.8,
+      "completeness_score_weight_30": 91.7,
       "rules_passed_pct_weight_40": 100.0,
       "validation_score_weight_15": 100.0,
       "extraction_confidence_weight_15": 100.0
@@ -35,11 +35,12 @@
     {
       "doc_type": "W-9 Tax Form",
       "file_name": "W9_AlphaVentures_LLC.pdf",
-      "completeness_score": 91.7,
+      "completeness_score": 83.3,
       "total_fields": 12,
-      "present_fields": 11,
+      "present_fields": 10,
       "missing_fields": [
-        "state_of_incorporation"
+        "state_of_incorporation",
+        "is_1099_eligible"
       ],
       "extraction_confidence": 1.0,
       "notes": "",
@@ -58,7 +59,7 @@
         },
         {
           "name": "tax_classification",
-          "value": "LLC (C corporation)",
+          "value": "LLC (C Corporation)",
           "has_error": false,
           "error": ""
         },
@@ -106,7 +107,7 @@
         },
         {
           "name": "is_1099_eligible",
-          "value": true,
+          "value": null,
           "has_error": false,
           "error": ""
         },
@@ -139,7 +140,7 @@
         },
         {
           "name": "insurer_name",
-          "value": "AIG Specialty Insurance Company",
+          "value": "AIG Specialty Insurance Company, National Union Fire Insurance Co. of Pittsburgh, Commerce and Industry Insurance Company",
           "has_error": false,
           "error": ""
         },
@@ -151,7 +152,7 @@
         },
         {
           "name": "general_liability_aggregate",
-          "value": 4000000,
+          "value": 1000000,
           "has_error": false,
           "error": ""
         },
@@ -317,13 +318,13 @@
     {
       "field_name": "bank_details",
       "consistent": false,
-      "details": "The Bank Verification Letter provides a US domestic routing number (123456789) but identifies the bank as 'HDFC Bank Ltd.' with an Indian SWIFT/BIC (HDFCINBBCHE). For a vendor onboarding in the USA, a US routing number is expected to be associated with a US-domiciled financial institution, making the explicit mention of an Indian bank inconsistent with a typical domestic US bank setup for payments."
+      "details": "The Bank Verification Letter lists 'HDFC Bank Ltd.' and SWIFT/BIC 'HDFCINBBCHE', which are associated with an Indian bank, while providing a US-format routing number '123456789'. This is inconsistent with vendor onboarding for the USA, where a US routing number should correspond to a US financial institution."
     }
   ],
   "missing_required_docs": [],
   "all_validation_errors": {},
   "recommendations": [
-    "Resolve cross-document conflict in 'bank_details': The Bank Verification Letter provides a US domestic routing number (123456789) but identifies the bank as 'HDFC Bank Ltd.' with an Indian SWIFT/BIC (HDFCINBBCHE). For a vendor onboarding in the USA, a US routing number is expected to be associated with a US-domiciled financial institution, making the explicit mention of an Indian bank inconsistent with a typical domestic US bank setup for payments."
+    "Resolve cross-document conflict in 'bank_details': The Bank Verification Letter lists 'HDFC Bank Ltd.' and SWIFT/BIC 'HDFCINBBCHE', which are associated with an Indian bank, while providing a US-format routing number '123456789'. This is inconsistent with vendor onboarding for the USA, where a US routing number should correspond to a US financial institution."
   ],
   "compliance_rules": [
     {

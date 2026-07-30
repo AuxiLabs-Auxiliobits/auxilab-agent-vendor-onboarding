@@ -4,8 +4,8 @@
 
 Built to conform to the **AuxiLab Publishing Standard**, VendorGate runs with:
 *   **Zero external databases** (operates entirely statelessly using file inputs/outputs).
-*   **Zero port multiplexing** (runs on fixed ports: Gradio UI on port `8000`, Streamlit on port `8501`).
-*   **Fully local, csv-driven configurations** for regional schemas and consistency rules.
+*   **Zero port multiplexing** (runs on fixed port: Gradio UI on port `8000`).
+*   **Fully local, CSV-driven configurations** for regional schemas and consistency rules.
 
 ---
 
@@ -117,7 +117,7 @@ The following flowchart outlines the step-by-step pipeline of VendorGate, starti
 |  +-----------------------------------------------------------------------------+  |
 |  | Compile Structured JSON Report -> Save Artifact to compliance_report.json   |  |
 |  | Output Terminal Decision Summary Card (Recommendation, Token Stats, Rules)  |  |
-|  | Render HTML Visual Dashboard in Gradio App / 100% Full-Width Streamlit Viewer |  |
+|  | Render HTML Visual Dashboard in Gradio App                                  |  |
 |  +-----------------------------------------------------------------------------+  |
 +-----------------------------------------------------------------------------------+
 ```
@@ -127,12 +127,13 @@ The following flowchart outlines the step-by-step pipeline of VendorGate, starti
 ## 📂 Project Directory Structure
 
 ```text
-├── app.py                      # Interactive Web UI entrypoint (Gradio dashboard)
-├── report_viewer.py            # Standalone Streamlit visualizer (has no connection to the agent pipeline; purely for viewing pre-extracted JSONs)
+├── app.py                      # Interactive Gradio web interface (runs on port 8000)
 ├── requirements.txt            # Python package dependencies
-├── .env                        # Local credentials & system-wide threshold properties
+├── .env                        # Local API credentials & system-wide threshold parameters
+├── envExample.txt              # Template for local credentials and thresholds
 ├── document_paths.txt          # Target list of document files for local testing
-├── config/                     # Config database
+├── compliance_report.json      # Output artifact containing the compiled compliance report
+├── config/                     # Configuration database
 │   ├── onboarding_config.csv   # Regional extraction schemas & country configurations
 │   └── compliance_rules.csv    # Dynamic consistency rules specifications
 ├── templates/                  # Sample mock PDF documents & text templates for validation
@@ -149,7 +150,7 @@ The following flowchart outlines the step-by-step pipeline of VendorGate, starti
 
 ## 🌐 Dynamic Regional Profiles & Country Configurations
 
-The agent reads [`config/onboarding_config.csv`](config/onboarding_config.csv) to discover what documents are required for a target country and which fields should be dynamically extracted from each document. 
+The agent reads `config/onboarding_config.csv` to dynamically discover what documents are required for a target country and which fields should be extracted from each document. 
 
 VendorGate comes pre-configured with 5 regional profiles:
 
@@ -175,33 +176,34 @@ VendorGate comes pre-configured with 5 regional profiles:
 | | Bank Account Verification | Yes | `account_holder_name`, `bank_name`, `account_number`, `swift_bic` |
 
 ### Custom Regex & Formatting Validations
-Within [`config/onboarding_config.csv`](config/onboarding_config.csv), you can specify field-level regex rules under the `validation_rules` column:
-*   **EIN Format Validation:** `ein:format=\d{2}-\d{7}` (Matches US W-9 standard tax identifiers).
-*   **9-Digit Routing Verification:** `routing_number:digits=9` (US transit bank numbers).
-*   **IFSC Code format (India):** `ifsc_code:format=[A-Z]{4}0[A-Z0-9]{6}`.
-*   **UEN Format (Singapore):** `uen_number:format=[0-9]{9}[A-Z]`.
+Within `config/onboarding_config.csv`, you can specify field-level validation rules under the `validation_rules` column (delimited by `|`):
+*   **Format Regex matching:** e.g., `ein:format=\d{2}-\d{7}` (Matches standard US W-9 tax identifiers).
+*   **Exact Digit Count check:** e.g., `routing_number:digits=9` (US transit bank numbers) or `company_number:digits=8` (UK company registration).
+*   **Minimum numeric boundary:** e.g., `general_liability_per_occurrence:min=1000000` (requires minimum liability limits).
 
-### 🤖 Configurable LLM Extraction Architecture
+---
 
-VendorGate uses LangChain to connect to different LLM providers. You can switch between them dynamically by changing the `LLM_PROVIDER` variable in your `.env` file:
+## 🤖 Configurable LLM Extraction Architecture
+
+VendorGate uses LangChain to connect to different LLM providers. You can switch between them dynamically by modifying the `LLM_PROVIDER` variable in your `.env` file:
 
 *   **Google Gemini (Default):** Runs multimodally (rendering PDF pages to images for vision extraction) using `gemini-2.5-flash`.
 *   **Anthropic Claude:** Runs multimodally using `claude-3-5-sonnet-20241022`.
 *   **Groq:** Runs using `llama-3.3-70b-versatile`. When using Groq (unless a specific vision model is defined), the system automatically falls back to **Text-Only mode** to ensure maximum compatibility.
 
-#### 📄 Text-Only Fallback & Dual-Library PDF Parser
-To run document processing without a vision model, you can set `TEXT_ONLY_FALLBACK=true` in your `.env` or run the CLI with the `--text-only` flag. 
+### 📄 Text-Only Fallback & Dual-Library PDF Parser
+To run document processing without a vision model, you can set `TEXT_ONLY_FALLBACK=true` in your `.env` or run the CLI with the `--text-only` flag (or toggle it via the Gradio UI checkbox). 
 
 When extracting text contents:
 1.  **PyMuPDF (fitz):** The agent first attempts to extract document text using PyMuPDF.
 2.  **pypdf Fallback:** If `fitz` fails or is not present, the agent automatically falls back to `pypdf` to extract text from the PDF pages.
-3.  **Direct Read:** If both PDF parsers fail, it falls back to a UTF-8 raw text reader.
+3.  **Direct Read:** If both PDF parsers fail or the file is plain text, it falls back to a UTF-8 raw text reader.
 
 ---
 
 ## 🛡️ The 10 Consistency & Compliance Rules Engine
 
-The agent parses [`config/compliance_rules.csv`](config/compliance_rules.csv) to evaluate every submission against 10 built-in compliance checks:
+The agent parses `config/compliance_rules.csv` to evaluate every submission against 10 built-in compliance checks:
 
 | Rule ID | Rule Title | Evaluation Type | Rule Logic & Thresholds |
 | :--- | :--- | :--- | :--- |
@@ -219,7 +221,7 @@ The agent parses [`config/compliance_rules.csv`](config/compliance_rules.csv) to
 ### Smart State Fallback Logic (Rule 9)
 If the W-9 `state_of_incorporation` is missing or blank, the compliance engine automatically triggers fallback checks:
 1.  It checks if a state code is present under the W-9 `state` or `address_state` field.
-2.  If still missing, it runs a regex regex-parser against the W-9 `address_line1` block to look for a US two-letter state abbreviation matching `\b([A-Z]{2})\b(?:\s+\d{5})?`.
+2.  If still missing, it runs a regex parser against the W-9 `address_line1` block to look for a US two-letter state abbreviation matching `\b([A-Z]{2})\b(?:\s+\d{5})?`.
 3.  Once the fallback state is identified, it resolves standard US state names (e.g. "IL" maps to "Illinois") and performs a comparison with the Company Registration jurisdiction.
 
 ---
@@ -276,7 +278,7 @@ The final workflow recommendation is automatically generated based on the severi
     ```
 
 3.  **Configure environment variables (`.env`):**
-    Create a `.env` file in the project root using [envExample.txt](envExample.txt) as a template.
+    Create a `.env` file in the project root using `envExample.txt` as a template.
     
     Example `.env` configuration:
     ```env
@@ -284,24 +286,22 @@ The final workflow recommendation is automatically generated based on the severi
     LLM_PROVIDER=google
     TEXT_ONLY_FALLBACK=false
 
-<<<<<<< HEAD
-    # Google Gemini
-=======
->>>>>>> origin/pixel-pirates
+    # Google Gemini Settings
     GEMINI_API_KEY=your_gemini_api_key_here
     GEMINI_AGENT_MODEL=gemini-2.5-flash
     GEMINI_MAX_TOKENS=4096
 
-    # Groq (Optional)
+    # Groq Settings (Optional)
     # GROQ_API_KEY=your_groq_api_key_here
     # GROQ_MODEL=llama-3.3-70b-versatile
     # GROQ_MAX_TOKENS=4096
 
-    # Anthropic (Optional)
+    # Anthropic Settings (Optional)
     # ANTHROPIC_API_KEY=your_anthropic_api_key_here
     # ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
     # ANTHROPIC_MAX_TOKENS=4096
     
+    # Compliance Threshold Properties
     SYSTEM_DATE=2026-06-09
     COI_MIN_LIABILITY_USD=1000000
     COI_EXPIRY_WARNING_DAYS=30
@@ -316,22 +316,22 @@ Start the primary web application:
 ```bash
 python app.py
 ```
-Open **[http://localhost:8000](http://localhost:8000)** in your browser. Here you can upload documents, select regional profiles (USA, India, etc.), toggle the "Text-Only Fallback" mode, and view validation summaries alongside visual HTML reports.
+This will automatically open your default browser to **[http://127.0.0.1:8000](http://127.0.0.1:8000)** (using the `inbrowser=True` parameter). The web interface now includes a real-time progress bar tracking the document extraction steps and validation rules in the background. Here you can upload files, choose country profiles, toggle "Text-Only Fallback" mode, and inspect summary cards alongside the visual HTML dashboard.
 
 ### 2. Run the CLI Compliance Agent
-Execute a local command-line run over list files or directories:
+Execute a local command-line run by specifying the input source and country profile:
+```bash
+python agent/extractor_agent.py <input_source> <country> [--text-only]
+```
+
+*   `<input_source>` can be:
+    *   A path to a `.txt` file containing document file paths (e.g., `document_paths.txt`).
+    *   A vendor directory ID (e.g., `VND-2026-00012`). In this case, the agent searches for files under the corresponding subfolder: `uploads/<input_source>`.
+*   `<country>` specifies the country profile matching `onboarding_config.csv` (e.g., `USA`, `India`, `UK`, `UAE`, `Singapore`).
+*   `--text-only` is an optional flag to override vision capabilities and use direct text extraction.
+
+Example:
 ```bash
 python agent/extractor_agent.py document_paths.txt USA
 ```
 This prints document parsing statuses, displays a terminal decision card with token usage, and creates `compliance_report.json` in the root workspace.
-
-### 3. Run the Standalone Report Viewer (Streamlit)
-
-> [!IMPORTANT]
-> **No Agent Integration:** The Streamlit application has **no connection or integration** with the active compliance agent pipeline. The agent itself is fully standalone. This Streamlit page is created purely as a visualization tool to let you upload or paste a generated compliance JSON report so you can get a quick visual glimpse of the dashboard structure.
-
-To visualize a pre-extracted `compliance_report.json` (such as the one produced by the CLI command) without triggering new LLM calls:
-```bash
-streamlit run report_viewer.py
-```
-Open **[http://localhost:8501](http://localhost:8501)** in your browser to inspect or paste the JSON report structure.

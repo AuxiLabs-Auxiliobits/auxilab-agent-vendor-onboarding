@@ -6,7 +6,7 @@ from agent.config_loader import get_countries
 from agent.pipeline import run_compliance_pipeline
 from agent.report_generator import render_report_html
 
-def process_onboarding(country, uploaded_files, text_only):
+def process_onboarding(country, uploaded_files, text_only, progress=gr.Progress()):
     if not country:
         return "### Error: Please select a country.", {}, "<p style='color:red;'>Please select a country.</p>"
     if not uploaded_files:
@@ -85,10 +85,21 @@ def process_onboarding(country, uploaded_files, text_only):
             else:
                 documents.append(("Unknown Document", lf))
                 
+        # Setup progress tracker
+        total_steps = len(documents) + 2
+        current_step = 0
+        
+        def progress_cb(msg: str):
+            nonlocal current_step
+            current_step += 1
+            val = min(0.95, current_step / total_steps)
+            progress(val, desc=msg)
+            
         report = run_compliance_pipeline(
             country=country,
             documents=documents,
-            text_only=text_only
+            text_only=text_only,
+            progress_callback=progress_cb
         )
         
         rec = report["summary"]["recommendation"]
@@ -225,8 +236,9 @@ with gr.Blocks() as demo:
 
 if __name__ == "__main__":
     demo.launch(
-        server_name="0.0.0.0", 
+        server_name="127.0.0.1", 
         server_port=8000,
+        inbrowser=True,
         theme=gr.themes.Soft(primary_hue="indigo", secondary_hue="slate"),
         css=custom_css
     )

@@ -345,6 +345,7 @@ def run_dynamic_extraction(
         llm = ChatAnthropic(model=model_name, max_tokens=max_tokens, api_key=api_key)
     elif llm_provider == "groq":
         try:
+            # pyrefly: ignore [missing-import]
             from langchain_groq import ChatGroq
         except ImportError:
             raise ImportError(

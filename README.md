@@ -181,6 +181,22 @@ Within [`config/onboarding_config.csv`](config/onboarding_config.csv), you can s
 *   **IFSC Code format (India):** `ifsc_code:format=[A-Z]{4}0[A-Z0-9]{6}`.
 *   **UEN Format (Singapore):** `uen_number:format=[0-9]{9}[A-Z]`.
 
+### 🤖 Configurable LLM Extraction Architecture
+
+VendorGate uses LangChain to connect to different LLM providers. You can switch between them dynamically by changing the `LLM_PROVIDER` variable in your `.env` file:
+
+*   **Google Gemini (Default):** Runs multimodally (rendering PDF pages to images for vision extraction) using `gemini-2.5-flash`.
+*   **Anthropic Claude:** Runs multimodally using `claude-3-5-sonnet-20241022`.
+*   **Groq:** Runs using `llama-3.3-70b-versatile`. When using Groq (unless a specific vision model is defined), the system automatically falls back to **Text-Only mode** to ensure maximum compatibility.
+
+#### 📄 Text-Only Fallback & Dual-Library PDF Parser
+To run document processing without a vision model, you can set `TEXT_ONLY_FALLBACK=true` in your `.env` or run the CLI with the `--text-only` flag. 
+
+When extracting text contents:
+1.  **PyMuPDF (fitz):** The agent first attempts to extract document text using PyMuPDF.
+2.  **pypdf Fallback:** If `fitz` fails or is not present, the agent automatically falls back to `pypdf` to extract text from the PDF pages.
+3.  **Direct Read:** If both PDF parsers fail, it falls back to a UTF-8 raw text reader.
+
 ---
 
 ## 🛡️ The 10 Consistency & Compliance Rules Engine

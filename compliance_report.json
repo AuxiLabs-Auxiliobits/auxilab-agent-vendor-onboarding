@@ -4,8 +4,8 @@
     "vendor_name": "Direct Input Vendor",
     "contact_email": "",
     "country": "USA",
-    "generated_at": "2026-07-30 11:52:57",
-    "extracted_at": "2026-07-30 11:52:57"
+    "generated_at": "2026-07-30 11:56:11",
+    "extracted_at": "2026-07-30 11:56:11"
   },
   "summary": {
     "overall_completeness_pct": 93.8,
@@ -19,7 +19,7 @@
     "recommendation": "Approve",
     "recommendation_reason": "Clean compliance: All required documents are present, fields validated, and all consistency checks passed.",
     "total_input_tokens": 2937,
-    "total_output_tokens": 7685,
+    "total_output_tokens": 6409,
     "vendor_compliance_score": 98.1,
     "vendor_risk_score": 1.9,
     "risk_level": "LOW RISK",
@@ -317,13 +317,13 @@
     {
       "field_name": "bank_details",
       "consistent": false,
-      "details": "The Bank Verification Letter lists 'HDFC Bank Ltd.' and an Indian SWIFT/BIC 'HDFCINBBCHE', which is inconsistent with the provided 9-digit US-format routing number '123456789'. This combination is unusual for a USA-based vendor and suggests a potential discrepancy in the banking setup for domestic US payments."
+      "details": "The Bank Verification Letter provides a US domestic routing number (123456789) but identifies the bank as 'HDFC Bank Ltd.' with an Indian SWIFT/BIC (HDFCINBBCHE). For a vendor onboarding in the USA, a US routing number is expected to be associated with a US-domiciled financial institution, making the explicit mention of an Indian bank inconsistent with a typical domestic US bank setup for payments."
     }
   ],
   "missing_required_docs": [],
   "all_validation_errors": {},
   "recommendations": [
-    "Resolve cross-document conflict in 'bank_details': The Bank Verification Letter lists 'HDFC Bank Ltd.' and an Indian SWIFT/BIC 'HDFCINBBCHE', which is inconsistent with the provided 9-digit US-format routing number '123456789'. This combination is unusual for a USA-based vendor and suggests a potential discrepancy in the banking setup for domestic US payments."
+    "Resolve cross-document conflict in 'bank_details': The Bank Verification Letter provides a US domestic routing number (123456789) but identifies the bank as 'HDFC Bank Ltd.' with an Indian SWIFT/BIC (HDFCINBBCHE). For a vendor onboarding in the USA, a US routing number is expected to be associated with a US-domiciled financial institution, making the explicit mention of an Indian bank inconsistent with a typical domestic US bank setup for payments."
   ],
   "compliance_rules": [
     {

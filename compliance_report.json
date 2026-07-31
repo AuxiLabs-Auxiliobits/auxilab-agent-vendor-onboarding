@@ -4,11 +4,11 @@
     "vendor_name": "Direct Input Vendor",
     "contact_email": "",
     "country": "USA",
-    "generated_at": "2026-07-30 15:01:54",
-    "extracted_at": "2026-07-30 15:01:54"
+    "generated_at": "2026-07-30 15:24:23",
+    "extracted_at": "2026-07-30 15:24:23"
   },
   "summary": {
-    "overall_completeness_pct": 91.7,
+    "overall_completeness_pct": 89.6,
     "status": "✅ Complete",
     "status_reason": "Clean compliance: All required documents are present, fields validated, and all consistency checks passed.",
     "total_docs_uploaded": 4,
@@ -18,14 +18,14 @@
     "total_validation_errors": 0,
     "recommendation": "Approve",
     "recommendation_reason": "Clean compliance: All required documents are present, fields validated, and all consistency checks passed.",
-    "total_input_tokens": 2952,
-    "total_output_tokens": 5973,
-    "vendor_compliance_score": 97.5,
-    "vendor_risk_score": 2.5,
+    "total_input_tokens": 2938,
+    "total_output_tokens": 6666,
+    "vendor_compliance_score": 96.9,
+    "vendor_risk_score": 3.1,
     "risk_level": "LOW RISK",
     "risk_badge": "🟢 LOW RISK",
     "risk_matrix_breakdown": {
-      "completeness_score_weight_30": 91.7,
+      "completeness_score_weight_30": 89.6,
       "rules_passed_pct_weight_40": 100.0,
       "validation_score_weight_15": 100.0,
       "extraction_confidence_weight_15": 100.0
@@ -35,11 +35,12 @@
     {
       "doc_type": "W-9 Tax Form",
       "file_name": "W9_AlphaVentures_LLC.pdf",
-      "completeness_score": 83.3,
+      "completeness_score": 75.0,
       "total_fields": 12,
-      "present_fields": 10,
+      "present_fields": 9,
       "missing_fields": [
         "state_of_incorporation",
+        "backup_withholding_exempt",
         "is_1099_eligible"
       ],
       "extraction_confidence": 1.0,
@@ -59,7 +60,7 @@
         },
         {
           "name": "tax_classification",
-          "value": "LLC (C Corporation)",
+          "value": "LLC taxed as C corporation",
           "has_error": false,
           "error": ""
         },
@@ -101,7 +102,7 @@
         },
         {
           "name": "backup_withholding_exempt",
-          "value": false,
+          "value": null,
           "has_error": false,
           "error": ""
         },
@@ -140,7 +141,7 @@
         },
         {
           "name": "insurer_name",
-          "value": "AIG Specialty Insurance Company, National Union Fire Insurance Co. of Pittsburgh, Commerce and Industry Insurance Company",
+          "value": "AIG Specialty Insurance Company",
           "has_error": false,
           "error": ""
         },
@@ -152,7 +153,7 @@
         },
         {
           "name": "general_liability_aggregate",
-          "value": 1000000,
+          "value": 4000000,
           "has_error": false,
           "error": ""
         },
@@ -314,18 +315,10 @@
       "has_llm_error": false
     }
   ],
-  "cross_validation": [
-    {
-      "field_name": "bank_details",
-      "consistent": false,
-      "details": "The Bank Verification Letter lists 'HDFC Bank Ltd.' and SWIFT/BIC 'HDFCINBBCHE', which are associated with an Indian bank, while providing a US-format routing number '123456789'. This is inconsistent with vendor onboarding for the USA, where a US routing number should correspond to a US financial institution."
-    }
-  ],
+  "cross_validation": [],
   "missing_required_docs": [],
   "all_validation_errors": {},
-  "recommendations": [
-    "Resolve cross-document conflict in 'bank_details': The Bank Verification Letter lists 'HDFC Bank Ltd.' and SWIFT/BIC 'HDFCINBBCHE', which are associated with an Indian bank, while providing a US-format routing number '123456789'. This is inconsistent with vendor onboarding for the USA, where a US routing number should correspond to a US financial institution."
-  ],
+  "recommendations": [],
   "compliance_rules": [
     {
       "rule_id": "Rule 1",

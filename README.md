@@ -130,7 +130,7 @@ The following flowchart outlines the step-by-step pipeline of VendorGate, starti
 ├── app.py                      # Interactive Gradio web interface (runs on port 8000)
 ├── requirements.txt            # Python package dependencies
 ├── .env                        # Local API credentials & system-wide threshold parameters
-├── envExample.txt              # Template for local credentials and thresholds
+├── .env.example                # Template for local credentials and thresholds
 ├── document_paths.txt          # Target list of document files for local testing
 ├── compliance_report.json      # Output artifact containing the compiled compliance report
 ├── config/                     # Configuration database
@@ -278,7 +278,7 @@ The final workflow recommendation is automatically generated based on the severi
     ```
 
 3.  **Configure environment variables (`.env`):**
-    Create a `.env` file in the project root using `envExample.txt` as a template.
+    Create a `.env` file in the project root using `.env.example` as a template.
     
     Example `.env` configuration:
     ```env
@@ -302,9 +302,8 @@ The final workflow recommendation is automatically generated based on the severi
     # ANTHROPIC_MAX_TOKENS=4096
     
     # Compliance Threshold Properties
-    SYSTEM_DATE=2026-06-09
-    COI_MIN_LIABILITY_USD=1000000
-    COI_EXPIRY_WARNING_DAYS=30
+    COI_MIN_LIABILITY_USD=YOUR_DATA_HERE
+    COI_EXPIRY_WARNING_DAYS=YOUR_DATA_HERE
     ```
 
 ---
@@ -335,3 +334,18 @@ Example:
 python agent/extractor_agent.py document_paths.txt USA
 ```
 This prints document parsing statuses, displays a terminal decision card with token usage, and creates `compliance_report.json` in the root workspace.
+
+---
+
+## 🧪 Running Unit Tests
+
+VendorGate includes a comprehensive, deterministic unit test suite in the `tests/` directory. These tests evaluate the compliance pipeline recommendation engine across three distinct scenarios using mocked LLM extraction responses, bypassing actual network API calls:
+
+1. **Clean Vendor Submission**: All USA required documents are present and pass the 10 consistency rules (expected result: `APPROVE`).
+2. **Flagged Submission (2 Rule Failures)**: Mismatching legal names and an expired COI policy (expected result: `REQUEST INFO`).
+3. **Escalated Submission**: Missing required documents and document completeness falls below 40% (expected result: `ESCALATE`).
+
+To run the unit tests:
+```bash
+python -m unittest tests/test_compliance.py
+```

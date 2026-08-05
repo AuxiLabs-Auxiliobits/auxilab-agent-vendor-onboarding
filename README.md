@@ -380,3 +380,15 @@ To run a single test case (e.g. Test 1):
 ```bash
 python -m unittest tests.test_compliance.TestVendorGateCompliance.test_1_approve_scenario
 ```
+
+
+---
+
+## Built By
+
+| Name | GitHub |
+|------|--------|
+| Brajendra Singh | [@brajendrasingh-auxiliobits](https://github.com/brajendrasingh-auxiliobits) |
+| Anmol Main | [@anmolmain-ABT](https://github.com/anmolmain-ABT) |
+
+Built during the **AuxiLab Founding Hackathon** by [Auxiliobits Technologies](https://auxiliobits.com) · [AuxiLab Catalogue](https://auxiliobits.com/auxilab)

@@ -338,7 +338,6 @@ This prints document parsing statuses, displays a terminal decision card with to
 ---
 
 ## 🧪 Running Unit Tests
-
 VendorGate includes a comprehensive, deterministic unit test suite in the `tests/` directory. These tests evaluate the compliance pipeline recommendation engine across three distinct scenarios using mocked LLM extraction responses, bypassing actual network API calls:
 
 1. **Clean Vendor Submission**: All USA required documents are present and pass the 10 consistency rules (expected result: `APPROVE`).
@@ -346,6 +345,38 @@ VendorGate includes a comprehensive, deterministic unit test suite in the `tests
 3. **Escalated Submission**: Missing required documents and document completeness falls below 40% (expected result: `ESCALATE`).
 
 To run the unit tests:
+VendorGate includes a comprehensive, deterministic, and traceback-free unit test suite in the `tests/` directory. These tests evaluate the compliance pipeline recommendation engine across the three distinct scenarios requested by your manager using static mock document extraction payloads:
+
+### Test Scenarios Covered
+1. **Test 1: Clean Vendor Submission (APPROVE)**:
+   * **Setup**: Mocks a complete USA onboarding package (W-9, COI, Bank Letter, and Registration) with 100% completeness where all 10 consistency rules pass.
+   * **Expected Decision**: `APPROVE`
+2. **Test 2: Flagged Vendor Submission (REQUEST INFO)**:
+   * **Setup**: Mocks a USA package with exactly two compliance failures: a legal name mismatch between W-9 and COI, and an expired COI policy date.
+   * **Expected Decision**: `REQUEST INFO`
+3. **Test 3: Deficient Vendor Submission (ESCALATE)**:
+   * **Setup**: Mocks a USA package missing required documents (COI, Bank Verification Letter, Company Registration) where the overall completeness is under 40% (specifically 25%).
+   * **Expected Decision**: `ESCALATE`
+
+### Key Design Features
+* **Zero Network Requests**: The extraction outputs are mocked locally from `tests/mock_data.json` using Python's `unittest.mock.patch` library. No LLM APIs are called, making the tests extremely fast (execution time < 15ms) and 100% deterministic.
+* **Dynamic Date Logic**: To prevent the test mock policies from becoming stale, the test suite fetches `datetime.date.today()` at runtime and dynamically adjusts mock expiration dates relative to it (e.g. `today + 90 days` for active policies, `today - 90 days` for expired policies).
+* **Alphabetical Ordering**: Test cases are prefixed numerically (`test_1_approve_scenario`, `test_2_request_info_scenario`, `test_3_escalate_scenario`) to ensure they execute sequentially in the exact 1, 2, 3 order.
+* **Traceback-Free Failure Logging**: Assertions are wrapped in custom try-except blocks. If any validation fails, the runner logs a clear ❌ failure box outlining the mismatch reasons to stdout/stderr instead of dumping a long Python traceback exception, while still exiting the process with code `1` (supporting standard CI/CD checks).
+
+### Execution Commands
+
+To run the entire compliance test suite from the project root:
 ```bash
 python -m unittest tests/test_compliance.py
+```
+
+To run the tests with verbose output (printing each scenario name as it executes):
+```bash
+python -m unittest tests/test_compliance.py -v
+```
+
+To run a single test case (e.g. Test 1):
+```bash
+python -m unittest tests.test_compliance.TestVendorGateCompliance.test_1_approve_scenario
 ```

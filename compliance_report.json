@@ -1,0 +1,438 @@
+{
+  "meta": {
+    "submission_id": "direct-run",
+    "vendor_name": "Direct Input Vendor",
+    "contact_email": "",
+    "country": "USA",
+    "generated_at": "2026-07-30 15:24:23",
+    "extracted_at": "2026-07-30 15:24:23"
+  },
+  "summary": {
+    "overall_completeness_pct": 89.6,
+    "status": "✅ Complete",
+    "status_reason": "Clean compliance: All required documents are present, fields validated, and all consistency checks passed.",
+    "total_docs_uploaded": 4,
+    "total_docs_missing": 0,
+    "total_cross_checks": 10,
+    "failed_cross_checks": 0,
+    "total_validation_errors": 0,
+    "recommendation": "Approve",
+    "recommendation_reason": "Clean compliance: All required documents are present, fields validated, and all consistency checks passed.",
+    "total_input_tokens": 2938,
+    "total_output_tokens": 6666,
+    "vendor_compliance_score": 96.9,
+    "vendor_risk_score": 3.1,
+    "risk_level": "LOW RISK",
+    "risk_badge": "🟢 LOW RISK",
+    "risk_matrix_breakdown": {
+      "completeness_score_weight_30": 89.6,
+      "rules_passed_pct_weight_40": 100.0,
+      "validation_score_weight_15": 100.0,
+      "extraction_confidence_weight_15": 100.0
+    }
+  },
+  "document_results": [
+    {
+      "doc_type": "W-9 Tax Form",
+      "file_name": "W9_AlphaVentures_LLC.pdf",
+      "completeness_score": 75.0,
+      "total_fields": 12,
+      "present_fields": 9,
+      "missing_fields": [
+        "state_of_incorporation",
+        "backup_withholding_exempt",
+        "is_1099_eligible"
+      ],
+      "extraction_confidence": 1.0,
+      "notes": "",
+      "fields": [
+        {
+          "name": "legal_name",
+          "value": "Alpha Ventures LLC",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "ein",
+          "value": "45-9876543",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "tax_classification",
+          "value": "LLC taxed as C corporation",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "dba_name",
+          "value": "Alpha Procurement",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "address_line1",
+          "value": "100 Operational Way, Suite 500",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "city",
+          "value": "Chicago",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "state",
+          "value": "IL",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "zip_code",
+          "value": "60601",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "state_of_incorporation",
+          "value": null,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "backup_withholding_exempt",
+          "value": null,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "is_1099_eligible",
+          "value": null,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "signature_present",
+          "value": true,
+          "has_error": false,
+          "error": ""
+        }
+      ],
+      "validation_errors": {},
+      "has_parse_error": false,
+      "has_llm_error": false
+    },
+    {
+      "doc_type": "Certificate of Insurance",
+      "file_name": "COI_Alpha Ventures LLC.pdf",
+      "completeness_score": 100.0,
+      "total_fields": 9,
+      "present_fields": 9,
+      "missing_fields": [],
+      "extraction_confidence": 1.0,
+      "notes": "",
+      "fields": [
+        {
+          "name": "insured_name",
+          "value": "Alpha Ventures LLC",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "insurer_name",
+          "value": "AIG Specialty Insurance Company",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "general_liability_per_occurrence",
+          "value": 2000000,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "general_liability_aggregate",
+          "value": 4000000,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "has_cyber_liability",
+          "value": true,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "cyber_liability_limit",
+          "value": 1000000,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "has_workers_comp",
+          "value": true,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "expiry_date",
+          "value": "10/15/2029",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "policy_number",
+          "value": "COI-1299388",
+          "has_error": false,
+          "error": ""
+        }
+      ],
+      "validation_errors": {},
+      "has_parse_error": false,
+      "has_llm_error": false
+    },
+    {
+      "doc_type": "Bank Verification Letter",
+      "file_name": "BankVerificationLetter_AlphaVentures.pdf",
+      "completeness_score": 100.0,
+      "total_fields": 9,
+      "present_fields": 9,
+      "missing_fields": [],
+      "extraction_confidence": 1.0,
+      "notes": "",
+      "fields": [
+        {
+          "name": "account_name",
+          "value": "Alpha Ventures LLC",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "bank_name",
+          "value": "HDFC Bank Ltd.",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "routing_number",
+          "value": "123456789",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "account_number_last4",
+          "value": "5678",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "account_type",
+          "value": "Checking",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "swift_bic",
+          "value": "HDFCINBBCHE",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "has_official_letterhead",
+          "value": true,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "beneficiary_name",
+          "value": "Alpha Ventures LLC",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "letter_date",
+          "value": "2026-02-20",
+          "has_error": false,
+          "error": ""
+        }
+      ],
+      "validation_errors": {},
+      "has_parse_error": false,
+      "has_llm_error": false
+    },
+    {
+      "doc_type": "Company Registration",
+      "file_name": "company_registration_AlphaVenturesLLC.pdf",
+      "completeness_score": 83.3,
+      "total_fields": 6,
+      "present_fields": 5,
+      "missing_fields": [
+        "registered_address"
+      ],
+      "extraction_confidence": 1.0,
+      "notes": "",
+      "fields": [
+        {
+          "name": "company_name",
+          "value": "Alpha Ventures LLC",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "registration_number",
+          "value": "REG-4500-IL",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "registration_date",
+          "value": "2022-02-14",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "jurisdiction",
+          "value": "State of Illinois",
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "registered_address",
+          "value": null,
+          "has_error": false,
+          "error": ""
+        },
+        {
+          "name": "entity_type",
+          "value": "Limited Liability Company (LLC)",
+          "has_error": false,
+          "error": ""
+        }
+      ],
+      "validation_errors": {},
+      "has_parse_error": false,
+      "has_llm_error": false
+    }
+  ],
+  "cross_validation": [],
+  "missing_required_docs": [],
+  "all_validation_errors": {},
+  "recommendations": [],
+  "compliance_rules": [
+    {
+      "rule_id": "Rule 1",
+      "rule_title": "W-9 Legal Name vs COI Insured Name",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "W-9 Tax Form": "Alpha Ventures LLC",
+        "Certificate of Insurance": "Alpha Ventures LLC"
+      },
+      "details": "Similarity: 100.0% (Required: >= 70.0%)",
+      "description": "Matches W-9 entity name to COI policy holder name using fuzzy matching (similarity >= 70%)."
+    },
+    {
+      "rule_id": "Rule 2",
+      "rule_title": "W-9 Legal Name vs Bank Account Name",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "W-9 Tax Form": "Alpha Ventures LLC",
+        "Bank Verification Letter": "Alpha Ventures LLC"
+      },
+      "details": "Similarity: 100.0% (Required: >= 70.0%)",
+      "description": "Verifies that the legal entity name matches the bank account name (similarity >= 70%)."
+    },
+    {
+      "rule_id": "Rule 3",
+      "rule_title": "COI Validity Check",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "Certificate of Insurance": "10/15/2029"
+      },
+      "details": "Policy Expiry: 2029-10-15 (System Date: 2026-06-09)",
+      "description": "Verifies the policy expiration date on the Certificate of Insurance is greater than the current SYSTEM_DATE."
+    },
+    {
+      "rule_id": "Rule 4",
+      "rule_title": "General Liability Limit Check",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "Certificate of Insurance": 2000000
+      },
+      "details": "Liability: $2,000,000.00 (Required: >= $1,000,000.00)",
+      "description": "Confirms General Liability Per Occurrence is >= COI_MIN_LIABILITY_USD ($1000000)."
+    },
+    {
+      "rule_id": "Rule 5",
+      "rule_title": "Cyber Liability Presence",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "Certificate of Insurance": true
+      },
+      "details": "Cyber Insurance Coverage: Present",
+      "description": "Validates the presence of cyber insurance coverage."
+    },
+    {
+      "rule_id": "Rule 6",
+      "rule_title": "COI Expiration Warning",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "Certificate of Insurance": "10/15/2029"
+      },
+      "details": "Policy expires in 1224 days (Warning threshold: < 30 days)",
+      "description": "Flags policies set to expire within COI_EXPIRY_WARNING_DAYS (30 days) of SYSTEM_DATE."
+    },
+    {
+      "rule_id": "Rule 7",
+      "rule_title": "W-9 Legal Name vs Company Registration Name",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "W-9 Tax Form": "Alpha Ventures LLC",
+        "Company Registration": "Alpha Ventures LLC"
+      },
+      "details": "Similarity: 100.0% (Required: >= 70.0%)",
+      "description": "Compares the W-9 legal entity name to the officially registered company name (similarity >= 70%)."
+    },
+    {
+      "rule_id": "Rule 8",
+      "rule_title": "Bank Account Name vs Bank Beneficiary Name",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "Bank Verification Letter": "Alpha Ventures LLC"
+      },
+      "details": "Similarity: 100.0% (Required: >= 70.0%)",
+      "description": "Verifies the account name matches the listed bank beneficiary name (similarity >= 70%)."
+    },
+    {
+      "rule_id": "Rule 9",
+      "rule_title": "Incorporation State Agreement",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "W-9 Tax Form": "IL",
+        "Company Registration": "State of Illinois"
+      },
+      "details": "Agreement: 'IL' (Smart fallback from W-9 Tax Form address state) matches 'State of Illinois'",
+      "description": "Cross-checks the state of incorporation between the W-9 form and the state registration document."
+    },
+    {
+      "rule_id": "Rule 10",
+      "rule_title": "W-9 Signature Verification",
+      "status": "Passed",
+      "passed": true,
+      "values": {
+        "W-9 Tax Form": true
+      },
+      "details": "Signature Present: Yes",
+      "description": "Validates that the signature is present and filled on the W-9 tax form."
+    }
+  ]
+}

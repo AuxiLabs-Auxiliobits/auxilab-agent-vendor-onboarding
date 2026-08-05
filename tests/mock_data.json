@@ -1,0 +1,208 @@
+{
+  "approve": {
+    "country": "USA",
+    "documents": {
+      "W-9 Tax Form": {
+        "legal_name": "Acme Corporation",
+        "ein": "12-3456789",
+        "tax_classification": "Corporation",
+        "dba_name": "Acme",
+        "address_line1": "123 Main St",
+        "city": "Austin",
+        "state": "TX",
+        "zip_code": "78701",
+        "state_of_incorporation": "TX",
+        "backup_withholding_exempt": "False",
+        "is_1099_eligible": "True",
+        "signature_present": "True",
+        "_file_name": "dummy_w9.pdf"
+      },
+      "Certificate of Insurance": {
+        "insured_name": "Acme Corporation",
+        "insurer_name": "Allstate",
+        "general_liability_per_occurrence": "1000000",
+        "general_liability_aggregate": "2000000",
+        "has_cyber_liability": "True",
+        "cyber_liability_limit": "1000000",
+        "has_workers_comp": "True",
+        "expiry_date": "2026-12-31",
+        "policy_number": "POL123456",
+        "_file_name": "dummy_coi.pdf"
+      },
+      "Bank Verification Letter": {
+        "account_name": "Acme Corporation",
+        "bank_name": "Chase Bank",
+        "routing_number": "123456789",
+        "account_number_last4": "9876",
+        "account_type": "Checking",
+        "swift_bic": "CHASUS33XXX",
+        "has_official_letterhead": "True",
+        "beneficiary_name": "Acme Corporation",
+        "letter_date": "2026-01-01",
+        "_file_name": "dummy_bank.pdf"
+      },
+      "Company Registration": {
+        "company_name": "Acme Corporation",
+        "registration_number": "REG987654",
+        "registration_date": "2020-01-01",
+        "jurisdiction": "TX",
+        "registered_address": "123 Main St, Austin, TX 78701",
+        "entity_type": "Corporation",
+        "_file_name": "dummy_reg.pdf"
+      }
+    },
+    "completeness": {
+      "W-9 Tax Form": {
+        "score": 100.0,
+        "total_fields": 12,
+        "present_fields": 12,
+        "missing_fields": []
+      },
+      "Certificate of Insurance": {
+        "score": 100.0,
+        "total_fields": 9,
+        "present_fields": 9,
+        "missing_fields": []
+      },
+      "Bank Verification Letter": {
+        "score": 100.0,
+        "total_fields": 9,
+        "present_fields": 9,
+        "missing_fields": []
+      },
+      "Company Registration": {
+        "score": 100.0,
+        "total_fields": 6,
+        "present_fields": 6,
+        "missing_fields": []
+      }
+    },
+    "validation_errors": {},
+    "missing_required_docs": [],
+    "overall_completeness_pct": 100.0,
+    "total_input_tokens": 1500,
+    "total_output_tokens": 500
+  },
+  "request_info": {
+    "country": "USA",
+    "documents": {
+      "W-9 Tax Form": {
+        "legal_name": "Acme Corporation",
+        "ein": "12-3456789",
+        "tax_classification": "Corporation",
+        "dba_name": "Acme",
+        "address_line1": "123 Main St",
+        "city": "Austin",
+        "state": "TX",
+        "zip_code": "78701",
+        "state_of_incorporation": "TX",
+        "backup_withholding_exempt": "False",
+        "is_1099_eligible": "True",
+        "signature_present": "True",
+        "_file_name": "dummy_w9.pdf"
+      },
+      "Certificate of Insurance": {
+        "insured_name": "Stark Industries LLC",
+        "insurer_name": "Allstate",
+        "general_liability_per_occurrence": "1000000",
+        "general_liability_aggregate": "2000000",
+        "has_cyber_liability": "True",
+        "cyber_liability_limit": "1000000",
+        "has_workers_comp": "True",
+        "expiry_date": "2025-12-31",
+        "policy_number": "POL123456",
+        "_file_name": "dummy_coi.pdf"
+      },
+      "Bank Verification Letter": {
+        "account_name": "Acme Corporation",
+        "bank_name": "Chase Bank",
+        "routing_number": "123456789",
+        "account_number_last4": "9876",
+        "account_type": "Checking",
+        "swift_bic": "CHASUS33XXX",
+        "has_official_letterhead": "True",
+        "beneficiary_name": "Acme Corporation",
+        "letter_date": "2026-01-01",
+        "_file_name": "dummy_bank.pdf"
+      },
+      "Company Registration": {
+        "company_name": "Acme Corporation",
+        "registration_number": "REG987654",
+        "registration_date": "2020-01-01",
+        "jurisdiction": "TX",
+        "registered_address": "123 Main St, Austin, TX 78701",
+        "entity_type": "Corporation",
+        "_file_name": "dummy_reg.pdf"
+      }
+    },
+    "completeness": {
+      "W-9 Tax Form": {
+        "score": 100.0,
+        "total_fields": 12,
+        "present_fields": 12,
+        "missing_fields": []
+      },
+      "Certificate of Insurance": {
+        "score": 100.0,
+        "total_fields": 9,
+        "present_fields": 9,
+        "missing_fields": []
+      },
+      "Bank Verification Letter": {
+        "score": 100.0,
+        "total_fields": 9,
+        "present_fields": 9,
+        "missing_fields": []
+      },
+      "Company Registration": {
+        "score": 100.0,
+        "total_fields": 6,
+        "present_fields": 6,
+        "missing_fields": []
+      }
+    },
+    "validation_errors": {},
+    "missing_required_docs": [],
+    "overall_completeness_pct": 100.0,
+    "total_input_tokens": 1500,
+    "total_output_tokens": 500
+  },
+  "escalate": {
+    "country": "USA",
+    "documents": {
+      "W-9 Tax Form": {
+        "legal_name": "Acme Corporation",
+        "ein": "12-3456789",
+        "signature_present": "True",
+        "_file_name": "dummy_w9.pdf"
+      }
+    },
+    "completeness": {
+      "W-9 Tax Form": {
+        "score": 25.0,
+        "total_fields": 12,
+        "present_fields": 3,
+        "missing_fields": [
+          "tax_classification",
+          "dba_name",
+          "address_line1",
+          "city",
+          "state",
+          "zip_code",
+          "state_of_incorporation",
+          "backup_withholding_exempt",
+          "is_1099_eligible"
+        ]
+      }
+    },
+    "validation_errors": {},
+    "missing_required_docs": [
+      "Certificate of Insurance",
+      "Bank Verification Letter",
+      "Company Registration"
+    ],
+    "overall_completeness_pct": 25.0,
+    "total_input_tokens": 500,
+    "total_output_tokens": 100
+  }
+}

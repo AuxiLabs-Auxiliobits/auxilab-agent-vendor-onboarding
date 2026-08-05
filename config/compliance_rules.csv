@@ -1,0 +1,11 @@
+rule_id,rule_title,rule_type,doc_type_1,field_1,doc_type_2,field_2,comparison_type,threshold,description
+Rule 1,W-9 Legal Name vs COI Insured Name,cross_doc,W-9 Tax Form,legal_name,Certificate of Insurance,insured_name,fuzzy_match,70,Matches W-9 entity name to COI policy holder name using fuzzy matching (similarity >= 70%).
+Rule 2,W-9 Legal Name vs Bank Account Name,cross_doc,W-9 Tax Form,legal_name,Bank Verification Letter,account_name,fuzzy_match,70,Verifies that the legal entity name matches the bank account name (similarity >= 70%).
+Rule 3,COI Validity Check,date_check,Certificate of Insurance,expiry_date,,,not_expired,,Verifies the policy expiration date on the Certificate of Insurance is greater than the current SYSTEM_DATE.
+Rule 4,General Liability Limit Check,value_check,Certificate of Insurance,general_liability_per_occurrence,,,min,1000000,Confirms General Liability Per Occurrence is >= COI_MIN_LIABILITY_USD ($1000000).
+Rule 5,Cyber Liability Presence,field_present,Certificate of Insurance,has_cyber_liability,,,is_true,,Validates the presence of cyber insurance coverage.
+Rule 6,COI Expiration Warning,date_warning,Certificate of Insurance,expiry_date,,,expiry_warning,30,Flags policies set to expire within COI_EXPIRY_WARNING_DAYS (30 days) of SYSTEM_DATE.
+Rule 7,W-9 Legal Name vs Company Registration Name,cross_doc,W-9 Tax Form,legal_name,Company Registration,company_name,fuzzy_match,70,Compares the W-9 legal entity name to the officially registered company name (similarity >= 70%).
+Rule 8,Bank Account Name vs Bank Beneficiary Name,cross_doc,Bank Verification Letter,account_name,Bank Verification Letter,beneficiary_name,fuzzy_match,70,Verifies the account name matches the listed bank beneficiary name (similarity >= 70%).
+Rule 9,Incorporation State Agreement,cross_doc,W-9 Tax Form,state_of_incorporation,Company Registration,jurisdiction,state_match,,Cross-checks the state of incorporation between the W-9 form and the state registration document.
+Rule 10,W-9 Signature Verification,field_present,W-9 Tax Form,signature_present,,,is_true,,Validates that the signature is present and filled on the W-9 tax form.

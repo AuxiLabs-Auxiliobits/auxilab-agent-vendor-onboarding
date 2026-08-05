@@ -48,7 +48,7 @@ class TestVendorGateCompliance(unittest.TestCase):
     def tearDownClass(cls):
         # If there were failures, log a summary and exit with code 1 (no traceback)
         if cls.failures:
-            print("\n=======================================================")
+            print("\n========================================================")
             print(f"❌ TEST SUITE FAILED with {len(cls.failures)} failure(s):")
             print("=======================================================")
             for idx, fail_msg in enumerate(cls.failures, 1):
